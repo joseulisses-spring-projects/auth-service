@@ -1,2 +1,6 @@
 # auth-service
-Serviço de autenticação JWT com Spring Boot 3, controle de usuários e roles.
+# Projeto em construção 
+
+Este repositório faz parte do meu portfólio backend desenvolvido em Java Spring Boot.
+
+Documentação completa será adicionada conforme o projeto evoluir.

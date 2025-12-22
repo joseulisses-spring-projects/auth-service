@@ -1,9 +1,14 @@
 package br.com.joseulisses.authservice.controller;
 
+import br.com.joseulisses.authservice.controller.dto.CreateUserRequest;
+import br.com.joseulisses.authservice.controller.dto.UserResponse;
 import br.com.joseulisses.authservice.domain.entity.User;
 import br.com.joseulisses.authservice.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/users")
@@ -15,12 +20,22 @@ public class UserController {
         this.userService = userService;
     }
 
-    // Endpoint de teste: busca usuário por email
-    // Ex: GET /users/by-email?email=teste@teste.com
-    @GetMapping("/by-email")
-    public ResponseEntity<User> findByEmail(@RequestParam String email) {
-        return userService.findByEmail(email)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @PostMapping
+    public ResponseEntity<UserResponse> create(@RequestBody @Valid CreateUserRequest request) {
+        User user = userService.create(
+                request.name(),
+                request.email(),
+                request.password()
+        );
+
+        UserResponse response = new UserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail()
+        );
+
+        return ResponseEntity
+                .created(URI.create("/users/" + user.getId()))
+                .body(response);
     }
 }

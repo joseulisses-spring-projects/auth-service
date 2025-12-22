@@ -2,28 +2,33 @@ package br.com.joseulisses.authservice.service;
 
 import br.com.joseulisses.authservice.domain.entity.User;
 import br.com.joseulisses.authservice.domain.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
+    public User create(String name, String email, String rawPassword) {
+        if (userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("Email já cadastrado");
+        }
 
-    public boolean emailExists(String email) {
-        return userRepository.existsByEmail(email);
-    }
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(rawPassword));
 
-    public User save(User user) {
+        //garante que nunca vai null
+        user.setEnabled(true);
+
         return userRepository.save(user);
     }
 }

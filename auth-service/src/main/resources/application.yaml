@@ -11,3 +11,9 @@ spring:
     open-in-view: false
 server:
   port: 8080
+
+security:
+  jwt:
+    secret: "x9V!p2#Qk7@Lz1$Rr8^aW3&uM5*eT0yN"  # 32+ chars
+    expiration-minutes: 60
+

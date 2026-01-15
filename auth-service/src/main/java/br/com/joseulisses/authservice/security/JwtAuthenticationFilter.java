@@ -31,35 +31,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        // 1️⃣ Se NÃO tiver Authorization OU não começar com Bearer → segue o fluxo
+        //  Se NÃO tiver Authorization OU não começar com Bearer → segue o fluxo
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 2️⃣ Extrai o token
+        //  Extrai o token
         String token = authHeader.substring(7);
 
-        // 3️⃣ Valida token
+        // Valida token
         if (!jwtService.isTokenValid(token)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 4️⃣ Extrai o subject (email)
+        // Extrai o subject (email)
         String email = jwtService.extractSubject(token);
 
-        // 5️⃣ Cria autenticação
+        // Cria autenticação
         var authentication = new UsernamePasswordAuthenticationToken(
                 email,
                 null,
                 List.of()
         );
 
-        // 6️⃣ Coloca no contexto do Spring Security
+        // Coloca no contexto do Spring Security
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // 7️⃣ Continua o fluxo
+        // Continua o fluxo
         filterChain.doFilter(request, response);
     }
 }
